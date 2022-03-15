@@ -1,13 +1,12 @@
-CREATE DATABASE livraria;
+CREATE DATABASE Livraria;
 
 CREATE TABLE Cliente (
     CPF       CHAR(11)      NOT NULL,
     nome      VARCHAR(40)   NOT NULL,
     endereço  VARCHAR(100)  NOT NULL,
     telefone  NUMERIC       NOT NULL,
-    e-mail    VARCHAR(30)   NOT NULL,
-    CONSTRAINT pk_cli PRIMARY KEY (CPF),
-    CONSTRAINT uk_cli UNIQUE (CPF)
+    e_mail    VARCHAR(30)   NOT NULL,
+    CONSTRAINT pk_cli PRIMARY KEY (CPF)
 );
 
     
@@ -15,42 +14,34 @@ CREATE TABLE Editora (
     cod_edi     INT      NOT NULL,
     nome        VARCHAR(40)   NOT NULL,
     contato     VARCHAR(40)  NOT NULL,
-    e-mail      VARCHAR(40)   NOT NULL,
+    e_mail      VARCHAR(40)   NOT NULL,
     tel_1       NUMERIC       NOT NULL,
     tel_2       NUMERIC       NOT NULL,
-    CONSTRAINT pk_edi PRIMARY KEY (cod_edi),
-    CONSTRAINT uk_edi UNIQUE (cod_edi)
+    CONSTRAINT pk_edi PRIMARY KEY (cod_edi)
 );
 
 CREATE TABLE Livro (
     ISBN        NUMERIC(13)     NOT NULL,
     titulo      VARCHAR(40)     NOT NULL,     
     categoria   VARCHAR(40)     NOT NULL,
-    ano         INT(4)          NOT NULL,
-    editora     VARCHAR(40)     NOT NULL,
+    ano         CHAR(4)			NOT NULL,
+    editora_cod INT				NOT NULL,
     autores     VARCHAR(100)    NOT NULL,
     qtd_disp    INT             NOT NULL,
     valor       DECIMAL(10,2)   NOT NULL,
-    CONSTRAINT pk_liv PRIMARY KEY (ISBN),
-    CONSTRAINT fk_liv_edi FOREIGN KEY (editora)
-        REFERENCES Editora (cod_edi),
-    CONSTRAINT uk_liv UNIQUE (num_ped)
+	CONSTRAINT pk_liv PRIMARY KEY (ISBN),
+    CONSTRAINT fk_liv_edi FOREIGN KEY (editora_cod)
+        REFERENCES Editora (cod_edi)
 ); 
 
 CREATE TABLE Pedido (
-    num_ped     INT   NOT NULL,
-    cliente     CHAR(11) NOT NULL,
-    titulo      VARCHAR(40) NOT NULL,
+    num_ped     INT   NOT NULL UNIQUE,
+    cliente		CHAR(11) NOT NULL,
+    ISBN	    NUMERIC(13) NOT NULL,
     qtd         INT NOT NULL,
-    valor_unit  DECIMAL(10,2) NOT NULL,
-    valor_total DECIMAL(10,2) NOT NULL,
     CONSTRAINT pk_ped PRIMARY KEY (num_ped),
-    CONSTRAINT uk_ped UNIQUE (num_ped),
-    CONSTRAINT ck_qtd CHECK (qtd<=livro.qtd_disp),
     CONSTRAINT fk_ped_cli FOREIGN KEY (cliente)
         REFERENCES Cliente (CPF),
-    CONSTRAINT fk_ped_tit FOREIGN KEY (titulo)
-        REFERENCES Livro (ISBN),
-    CONSTRAINT fk_ped_val FOREIGN KEY (valor_unit)
-        REFERENCES Livro (valor)
+    CONSTRAINT fk_ped_tit FOREIGN KEY (ISBN)
+        REFERENCES Livro (ISBN)
 ); 
