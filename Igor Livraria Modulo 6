@@ -2,66 +2,55 @@ CREATE DATABASE livraria;
 
 CREATE TABLE Cliente (
     CPF       CHAR(11)      NOT NULL,
-    nome      VARCHAR(30)   NOT NULL,
+    nome      VARCHAR(40)   NOT NULL,
     endereço  VARCHAR(100)  NOT NULL,
     telefone  NUMERIC       NOT NULL,
     e-mail    VARCHAR(30)   NOT NULL,
     CONSTRAINT pk_cli PRIMARY KEY (CPF),
-    CONSTRAINT uk_cpf UNIQUE (CPF)
+    CONSTRAINT uk_cli UNIQUE (CPF)
 );
+
+    
+CREATE TABLE Editora (
+    cod_edi     INT      NOT NULL,
+    nome        VARCHAR(40)   NOT NULL,
+    contato     VARCHAR(40)  NOT NULL,
+    e-mail      VARCHAR(40)   NOT NULL,
+    tel_1       NUMERIC       NOT NULL,
+    tel_2       NUMERIC       NOT NULL,
+    CONSTRAINT pk_edi PRIMARY KEY (cod_edi),
+    CONSTRAINT uk_edi UNIQUE (cod_edi)
+);
+
+CREATE TABLE Livro (
+    ISBN        NUMERIC(13)     NOT NULL,
+    titulo      VARCHAR(40)     NOT NULL,     
+    categoria   VARCHAR(40)     NOT NULL,
+    ano         INT(4)          NOT NULL,
+    editora     VARCHAR(40)     NOT NULL,
+    autores     VARCHAR(100)    NOT NULL,
+    qtd_disp    INT             NOT NULL,
+    valor       DECIMAL(10,2)   NOT NULL,
+    CONSTRAINT pk_liv PRIMARY KEY (ISBN),
+    CONSTRAINT fk_liv_edi FOREIGN KEY (editora)
+        REFERENCES Editora (cod_edi),
+    CONSTRAINT uk_liv UNIQUE (num_ped)
+); 
 
 CREATE TABLE Pedido (
-    num_ped     INT   NOT NULL
-    cliente     CHAR(11)
-    
-    ###############################
-    
-    ID_Func     SERIAL,
-    NomeFunc    VARCHAR(50)  NOT NULL,
-    Endereco    VARCHAR(80)  NOT NULL,
-    DataNasc    DATE          NOT NULL,
-    Sexo        CHAR(1)       NOT NULL,
-    Salario     DECIMAL(8,2)   NOT NULL,
-    ID_Superv   INTEGER         NULL,
-    ID_Depto    INTEGER     NOT NULL,
-    CONSTRAINT pk_func PRIMARY KEY (ID_Func),
-    CONSTRAINT ck_sexo CHECK (Sexo='M' or Sexo='F')
-);
-
-CREATE TABLE Projeto (
-    ID_Proj       SERIAL,
-    NomeProj      VARCHAR(30)  NOT NULL,
-    Localizacao   VARCHAR(30)      NULL,
-    ID_Depto      INTEGER    NOT NULL,
-    CONSTRAINT pk_proj PRIMARY KEY (ID_Proj),
-    CONSTRAINT fk_proj_depto FOREIGN KEY (ID_Depto)
-       REFERENCES Departamento (ID_Depto),
-    CONSTRAINT uk_nomeProj UNIQUE (NomeProj)
-);
-
-CREATE TABLE Dependente (
-    ID_Dep       SERIAL,
-    ID_Func      INTEGER     NOT NULL,
-    NomeDep      VARCHAR(50)  NOT NULL,
-    DataNasc     DATE          NOT NULL,
-    Sexo         CHAR(1)       NOT NULL,
-    Parentesco   CHAR(15)          NULL,
-    CONSTRAINT pk_depend PRIMARY KEY (ID_Dep),
-    CONSTRAINT fk_dep_func FOREIGN KEY (ID_Func)
-       REFERENCES Funcionario (ID_Func)
-       ON DELETE CASCADE,
-    CONSTRAINT ck_sexo_dep CHECK (Sexo='M' or Sexo='F')
-);
-
-CREATE TABLE Trabalha (
-    ID_Func    SERIAL,
-    ID_Proj    INTEGER     NOT NULL,
-    NumHoras   DECIMAL(6,1)       NULL,
-    CONSTRAINT pk_trab PRIMARY KEY (ID_Func,ID_Proj),
-    CONSTRAINT fk_trab_func FOREIGN KEY (ID_Func)
-       REFERENCES Funcionario (ID_Func)
-       ON DELETE CASCADE,
-    CONSTRAINT fk_trab_proj FOREIGN KEY (ID_Proj)
-       REFERENCES Projeto (ID_Proj)
-       ON DELETE CASCADE
-);
+    num_ped     INT   NOT NULL,
+    cliente     CHAR(11) NOT NULL,
+    titulo      VARCHAR(40) NOT NULL,
+    qtd         INT NOT NULL,
+    valor_unit  DECIMAL(10,2) NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL,
+    CONSTRAINT pk_ped PRIMARY KEY (num_ped),
+    CONSTRAINT uk_ped UNIQUE (num_ped),
+    CONSTRAINT ck_qtd CHECK (qtd<=livro.qtd_disp),
+    CONSTRAINT fk_ped_cli FOREIGN KEY (cliente)
+        REFERENCES Cliente (CPF),
+    CONSTRAINT fk_ped_tit FOREIGN KEY (titulo)
+        REFERENCES Livro (ISBN),
+    CONSTRAINT fk_ped_val FOREIGN KEY (valor_unit)
+        REFERENCES Livro (valor)
+); 
